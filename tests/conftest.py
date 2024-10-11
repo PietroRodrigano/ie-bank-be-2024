@@ -1,22 +1,19 @@
-import os
+import pytest
+from iebank_api.models import Account
+from iebank_api import db, app
 
-class Config(object): 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG = False
 
-class LocalConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///local.db'
-    DEBUG = True
 
-class GithubCIConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
-    DEBUG = True
+@pytest.fixture
+def testing_client(scope='module'):
+    with app.app_context():
+        db.create_all()
+        account = Account('Test Account', '€', 'Spain')
+        db.session.add(account)
+        db.session.commit()
 
-class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
-    dbuser=os.getenv('DBUSER'),
-    dbpass=os.getenv('DBPASS'),
-    dbhost=os.getenv('DBHOST'),
-    dbname=os.getenv('DBNAME')
-    )
-    DEBUG = True
+    with app.test_client() as testing_client:
+        yield testing_client
+
+    with app.app_context():
+        db.drop_all()
