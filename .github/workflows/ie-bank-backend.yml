@@ -50,7 +50,7 @@ jobs:
         path: |
           . 
 
-  deploy-dev:
+  deploy-DEV:
     runs-on: ubuntu-latest
     needs: build
     environment:
