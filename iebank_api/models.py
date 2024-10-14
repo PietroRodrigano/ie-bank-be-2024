@@ -11,7 +11,7 @@ class Account(db.Model):
     country = db.Column(db.String(32), nullable=False)
     status = db.Column(db.String(10), nullable=False, default="Active")
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-
+ 
     def __repr__(self):
         return '<Event %r>' % self.account_number
 
